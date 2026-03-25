@@ -1,0 +1,12 @@
+model:
+  hidden_dim: 128
+
+data:
+  batch_size: 32
+  num_workers: 4
+
+trainer:
+  max_epochs: 50
+
+logging:
+  project: extreme-rainfall

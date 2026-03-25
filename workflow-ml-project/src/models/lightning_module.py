@@ -56,6 +56,11 @@ class RainfallRegressionModel(L.LightningModule):
         loss = self.criterion(y_hat, y)
         self.log('test_loss', loss)
         return loss
+
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        x, _ = batch
+        x = x.float()
+        return self(x)
     
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.learning_rate)

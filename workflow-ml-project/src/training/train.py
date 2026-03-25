@@ -5,12 +5,8 @@ from src.models.model import SimpleMLP
 from src.data.datamodule import CustomDataModule
 from src.models.lightning_module import RainfallRegressionModel
 from src.utils.config import load_config
-from src.utils.outputs import make_output_dir
 import argparse
 import os
-
-
-
 
 def main(config):
 
@@ -20,16 +16,18 @@ def main(config):
         config=config,
         save_dir=config['logging']['base_dir']
     )
+
     run_id = wandb_logger.experiment.id
     out_dir = f"{config['logging']['base_dir']}/{config['logging']['project']}/{run_id}"
-    # out_dir = make_output_dir(config)
 
     datamodule = CustomDataModule(
         data_in_path=config['data']['input_path'],
         data_target_path=config['data']['target_path'],
         batch_size=config['data']['batch_size']
     )
+
     image_size = datamodule.image_shape[1]*datamodule.image_shape[2]
+
     model = SimpleMLP(input_size=image_size, 
                       hidden_size=config['model']['hidden_size'], 
                       target_size=1)
@@ -50,8 +48,11 @@ def main(config):
         default_root_dir=out_dir,
         callbacks=[checkpoint_callback],
     )
+    
     trainer.fit(lightning_model, datamodule=datamodule)
     trainer.validate(lightning_model, datamodule=datamodule)
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a rainfall regression model.")

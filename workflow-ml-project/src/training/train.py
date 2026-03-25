@@ -1,22 +1,28 @@
 import lightning as L
+from pytorch_lightning.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from src.models.model import SimpleMLP
-from src.data.dataset import CustomDataset
 from src.data.datamodule import CustomDataModule
 from src.models.lightning_module import RainfallRegressionModel
 from src.utils.config import load_config
+from src.utils.outputs import make_output_dir
 import argparse
 import os
 
+
+
+
 def main(config):
-    os.makedirs("logs", exist_ok=True)
 
     wandb_logger = WandbLogger(
         project=config['logging']['project'],
         name=config['logging'].get('run_name'),
         config=config,
-        save_dir="logs",
+        save_dir=config['logging']['base_dir']
     )
+    run_id = wandb_logger.experiment.id
+    out_dir = f"{config['logging']['base_dir']}/{config['logging']['project']}/{run_id}"
+    # out_dir = make_output_dir(config)
 
     datamodule = CustomDataModule(
         data_in_path=config['data']['input_path'],
@@ -29,11 +35,20 @@ def main(config):
                       target_size=1)
     
     lightning_model = RainfallRegressionModel(model, learning_rate=config['trainer']['learning_rate'])
-    
+
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=os.path.join(out_dir, "checkpoints"),
+        filename="best",
+        monitor="val_loss",
+        save_top_k=1,
+        mode="min",
+    )
+
     trainer = L.Trainer(
         max_epochs=config['trainer']['max_epochs'],
         logger=wandb_logger,
-        default_root_dir="logs",
+        default_root_dir=out_dir,
+        callbacks=[checkpoint_callback],
     )
     trainer.fit(lightning_model, datamodule=datamodule)
     trainer.validate(lightning_model, datamodule=datamodule)

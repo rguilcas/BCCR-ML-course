@@ -4,3 +4,7 @@ projects/WeatherClassification/data/dataset/*
 projects/WeatherClassification/data/dataset_renamed/*
 *.pyc
 workflow-ml-project/logs/*
+workflow-ml-project/notebooks/*
+workflow-ml-project/outputs/*
+workflow-ml-project/.vscode/*
+workflow-ml-project/wandb/*

@@ -52,6 +52,7 @@ class WeatherDataset(Dataset):
         return len(self.files)
 
     def _load_data(self):
+        # We run this when we initialise the data set holder, to load the data into memory
         for idx in range(len(self)):
             img, lab = self.__getitem__file(idx)
             self._loaded_images[idx] = img.numpy()
@@ -70,7 +71,7 @@ class WeatherDataset(Dataset):
         label = file_name.split('/')[0]
         imgpath = self.filepath+file_name
         im = Image.open(imgpath)
-        # Resize our image to make them smaller and consistently sized
+        # Resize our image to make it smaller and consistently sized
         im = np.array(im.resize((self.D, self.D)))
         # Return the image in torch format, as well as the image label
         return torch.tensor(im, dtype=torch.float32).transpose(2, 0), label_dict[label]

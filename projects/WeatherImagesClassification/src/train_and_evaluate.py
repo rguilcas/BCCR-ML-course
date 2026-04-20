@@ -66,7 +66,7 @@ def train_model(net, val_dataloader, train_dataloader, device, epochs,
             # zero the parameter gradients
             optimizer.zero_grad()
     
-            # Send our image to the gpu, and run it through the model
+            # Send our image to the device (gpu), and run it through the model
             outputs = net(inputs.to(device))
             # Get our predicted class to the cpu, and compare it to the true label
             loss = criterion(outputs.to('cpu'), labels)

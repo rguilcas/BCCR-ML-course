@@ -1,3 +1,11 @@
+# This preprocessing has already been done for you in the data you've been provided.
+# It filters out images which don't have three colour channels, and then splits the
+# data into test, validation and training subsets.
+# We do the split separately for each class to avoid class imbalance between the
+# different subsets.
+# We leave the image files as they are, but create metadata files which list which
+# images are to be used in each subset.
+
 import numpy as np
 import os
 from PIL import Image
@@ -26,8 +34,10 @@ for cls in classes:
         else:
             to_use[cls].append(ff)
 
-test_list, val_list, train_list = [], [], []
 
+# Split the data into test, validation and training subsets
+test_list, val_list, train_list = [], [], []
+# For each class, split the data and add to the list
 for cls in classes:
     N = len(to_use[cls])
     # 20% test, 20% val, 60% train
@@ -44,5 +54,6 @@ for cls in classes:
             (test_list, idx_test), (val_list, idx_val), (train_list, idx_train)]:
         subset_list += [cls+'/'+to_use[cls][ii] for ii in idx_list]
 
+# Save csv files listing which images make up which subsets
 for ll, name in [(test_list, 'test'), (val_list, 'val'), (train_list, 'train')]:
     np.savetxt(metapath+name+'.csv', np.array(ll), fmt='%s')

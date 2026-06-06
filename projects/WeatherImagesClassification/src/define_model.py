@@ -22,8 +22,9 @@ class Net(nn.Module):
         # L1, L2, L3: flat data lengths
         super().__init__()
         self.conv1 = nn.Conv2d(C1, C2, kernel_size)
-        self.pool = nn.MaxPool2d(P, P)
+        self.pool1 = nn.MaxPool2d(P, P)
         self.conv2 = nn.Conv2d(C2, C3, kernel_size)
+        self.pool2 = nn.MaxPool2d(P, P)
         # Calculate how big the images will be after two layers of convolutions and max pooling
         D_after_one_conv_maxpool = (D - (kernel_size-1))//P
         D_after_two_conv_maxpool = (D_after_one_conv_maxpool - (kernel_size-1))//P
@@ -33,9 +34,9 @@ class Net(nn.Module):
 
     def forward(self, x):
         # x has dim C1 x 32 x 32 (or C1 x D x D if you've changed this in WeatherDataset)
-        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool1(F.relu(self.conv1(x)))
         # x has dim C2 x 14 x 14
-        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool2(F.relu(self.conv2(x)))
         # x has dim C3 x 5 x 5
         x = torch.flatten(x, 1) # flatten all dimensions except batch
         x = F.relu(self.fc1(x))

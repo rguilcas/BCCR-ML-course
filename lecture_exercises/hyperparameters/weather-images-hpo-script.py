@@ -1,4 +1,7 @@
-from PIL import Image
+# This example HPO sweep is based on the Weather Images Classification project, and uses
+# Weights and Biases to track the experiments. You can follow the progress on the
+# Weights and Biases web site.
+# See the readme for instructions on how to run.
 
 # We rely on several libraries
 import matplotlib.pyplot as plt
@@ -14,7 +17,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
-# We load in some code we've defined elsewhere, in the src folder
+# We load in some code we've defined elsewhere, in the project folder
 weather_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) \
     +'/projects/WeatherImagesClassification'
 sys.path.append(weather_dir)
@@ -45,6 +48,7 @@ device = torch.device('cuda')
 project_id = "my-panda-sweep-8" # Pock an identifier
 
 def try_settings():
+    # This function trains a network and records the progress to Weights and Biases
     with wandb.init(project=project_id) as run:
         B = 32
         lr = run.config.lr
@@ -69,13 +73,13 @@ def try_settings():
             raise ValueError
         
         # Train our model
-        epochs =  20
+        epochs =  20 # Key setting: how long to train each model
         train_curve, val_curve = train_model(
             net, val_dataloader, train_dataloader, device, epochs, optimizer, criterion)
         for val in val_curve:
             run.log({'score': val})
 
-
+# We do a broad sweep of learning rate, optimizer and some internal layer hyperparameters.
 sweep_configuration = {
     "method": "random", # Alternatives are "grid", "random", "bayes"
     "metric": {"goal": "maximize", "name": "score"},
@@ -91,4 +95,4 @@ sweep_configuration = {
 
 sweep_id = wandb.sweep(sweep=sweep_configuration, project=project_id)
 
-wandb.agent(sweep_id, function=try_settings, count=64)
+wandb.agent(sweep_id, function=try_settings, count=64) # Key setting: how many models to train

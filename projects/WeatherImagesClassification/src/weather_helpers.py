@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from PIL import Image
 import random
 import torch
@@ -20,8 +21,9 @@ label_dict = {
     'snow': 10,
 }
 
-filepath = 'data/dataset/'
-metapath = 'data/metadata/'
+data_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/data/'
+filepath = data_dir + 'dataset/'
+metapath = data_dir + 'metadata/'
 
 class WeatherDataset(Dataset):
     # Define a class to hold our data set

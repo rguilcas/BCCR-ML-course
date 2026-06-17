@@ -45,7 +45,14 @@ print(f'Data loading took {np.round(time.time()-start, 4)} seconds.')
 print(torch.cuda.is_available())
 device = torch.device('cuda')
 
-project_id = "my-panda-sweep-8" # Pock an identifier
+##############################
+# PICK A PROJECT IDENTIFIER. #
+##############################
+
+project_id = "my-panda-sweep-8" # Pick an identifier
+
+##############################
+##############################
 
 def try_settings():
     # This function trains a network and records the progress to Weights and Biases
@@ -73,13 +80,33 @@ def try_settings():
             raise ValueError
         
         # Train our model
+
+        ########################################
+        # CHOOSE HOW LONG TO TRAIN EACH MODEL. #
+        ########################################
+
         epochs =  20 # Key setting: how long to train each model
+
+        ########################################
+        ########################################
+
+        
         train_curve, val_curve = train_model(
             net, val_dataloader, train_dataloader, device, epochs, optimizer, criterion)
         for val in val_curve:
             run.log({'score': val})
 
 # We do a broad sweep of learning rate, optimizer and some internal layer hyperparameters.
+
+
+
+###################################
+# CONFIGURE SWEEP PARAMETERS HERE #
+###################################
+
+epochs =  20 # Key setting: how long to train each model
+
+
 sweep_configuration = {
     "method": "random", # Alternatives are "grid", "random", "bayes"
     "metric": {"goal": "maximize", "name": "score"},
@@ -92,6 +119,9 @@ sweep_configuration = {
         "optimizer": {"values": ["SGD", "Adam", "AdamW"], "distribution": "categorical"},
     },
 }
+
+########################################
+########################################
 
 sweep_id = wandb.sweep(sweep=sweep_configuration, project=project_id)
 

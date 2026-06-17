@@ -6,3 +6,4 @@ workflow-ml-project/notebooks/*
 workflow-ml-project/outputs/*
 workflow-ml-project/.vscode/*
 workflow-ml-project/wandb/*
+*/*/wandb/*

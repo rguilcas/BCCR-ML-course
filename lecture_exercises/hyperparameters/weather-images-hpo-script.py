@@ -104,8 +104,6 @@ def try_settings():
 # CONFIGURE SWEEP PARAMETERS HERE #
 ###################################
 
-epochs =  20 # Key setting: how long to train each model
-
 
 sweep_configuration = {
     "method": "random", # Alternatives are "grid", "random", "bayes"

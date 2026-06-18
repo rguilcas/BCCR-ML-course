@@ -4,7 +4,6 @@
 # See the readme for instructions on how to run.
 
 # We rely on several libraries
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 import sklearn
@@ -49,7 +48,7 @@ device = torch.device('cuda')
 # PICK A PROJECT IDENTIFIER. #
 ##############################
 
-project_id = "my-panda-sweep-8" # Pick an identifier
+project_id = "my-first-hpo-sweep" # Pick an identifier
 
 ##############################
 ##############################
@@ -85,7 +84,7 @@ def try_settings():
         # CHOOSE HOW LONG TO TRAIN EACH MODEL. #
         ########################################
 
-        epochs =  20 # Key setting: how long to train each model
+        epochs =  5 # Key setting: how long to train each model
 
         ########################################
         ########################################
@@ -123,4 +122,4 @@ sweep_configuration = {
 
 sweep_id = wandb.sweep(sweep=sweep_configuration, project=project_id)
 
-wandb.agent(sweep_id, function=try_settings, count=64) # Key setting: how many models to train
+wandb.agent(sweep_id, function=try_settings, count=10) # Key setting: how many models to train

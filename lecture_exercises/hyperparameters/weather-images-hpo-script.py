@@ -6,7 +6,6 @@
 # We rely on several libraries
 import numpy as np
 import os
-import sklearn
 import sys
 import time
 import wandb
@@ -20,15 +19,14 @@ from torch.utils.data import DataLoader
 weather_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) \
     +'/projects/WeatherImagesClassification'
 sys.path.append(weather_dir)
-print(sys.path)
 
 from src.weather_helpers import (
-    WeatherDataset, filepath, metapath, reset_seeds, plot_learning_curves, get_class_name
+    WeatherDataset, filepath, metapath, reset_seeds
 )
 
 from src.define_model import Net
 
-from src.train_and_evaluate import evaluate_model, evaluate_wrapper, train_model
+from src.train_and_evaluate import train_model
 
 # We have some objects that hold our data.
 # The data split has already been done for us
@@ -95,14 +93,11 @@ def try_settings():
         for val in val_curve:
             run.log({'score': val})
 
-# We do a broad sweep of learning rate, optimizer and some internal layer hyperparameters.
-
-
 
 ###################################
 # CONFIGURE SWEEP PARAMETERS HERE #
 ###################################
-
+# We do a broad sweep of learning rate, optimizer and some internal layer hyperparameters.
 
 sweep_configuration = {
     "method": "random", # Alternatives are "grid", "random", "bayes"
